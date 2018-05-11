@@ -17,3 +17,23 @@ bindkey "^P" history-beginning-search-backward
 bindkey "^N" history-beginning-search-forward
 
 export EDITOR=vim
+
+# ignore directories that start with WINDIR
+
+# http://zshwiki.org/home/scripting/array
+# http://zshwiki.org/home/scripting/paramflags#jflag
+
+WINDIR=`cygpath -W`
+
+local -a included_paths=()
+local -a excluded_paths=()
+
+for entry in $path[@];
+do
+	case $entry:u in 
+		(${WINDIR:u}*) excluded_paths+=( $entry ); continue
+	esac
+
+	included_paths+=( $entry )
+done
+export PATH=${(j_:_)included_paths}
